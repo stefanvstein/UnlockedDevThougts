@@ -2,73 +2,87 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Tags on UnlockedDevThoughts</title>
-    <link>http://example.org/tags/</link>
+    <link>http://localhost:1313/tags/</link>
     <description>Recent content in Tags on UnlockedDevThoughts</description>
     <generator>Hugo</generator>
     <language>en-us</language>
     <lastBuildDate>Thu, 27 Mar 2025 00:00:00 +0000</lastBuildDate>
-    <atom:link href="http://example.org/tags/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="http://localhost:1313/tags/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Highlight</title>
-      <link>http://example.org/tags/highlight/</link>
+      <link>http://localhost:1313/tags/highlight/</link>
       <pubDate>Thu, 27 Mar 2025 00:00:00 +0000</pubDate>
-      <guid>http://example.org/tags/highlight/</guid>
+      <guid>http://localhost:1313/tags/highlight/</guid>
       <description></description>
     </item>
     <item>
       <title>Layout</title>
-      <link>http://example.org/tags/layout/</link>
+      <link>http://localhost:1313/tags/layout/</link>
       <pubDate>Thu, 27 Mar 2025 00:00:00 +0000</pubDate>
-      <guid>http://example.org/tags/layout/</guid>
+      <guid>http://localhost:1313/tags/layout/</guid>
       <description></description>
     </item>
     <item>
       <title>Prism</title>
-      <link>http://example.org/tags/prism/</link>
+      <link>http://localhost:1313/tags/prism/</link>
       <pubDate>Thu, 27 Mar 2025 00:00:00 +0000</pubDate>
-      <guid>http://example.org/tags/prism/</guid>
+      <guid>http://localhost:1313/tags/prism/</guid>
       <description></description>
     </item>
     <item>
       <title>Stil</title>
-      <link>http://example.org/tags/stil/</link>
+      <link>http://localhost:1313/tags/stil/</link>
       <pubDate>Thu, 27 Mar 2025 00:00:00 +0000</pubDate>
-      <guid>http://example.org/tags/stil/</guid>
+      <guid>http://localhost:1313/tags/stil/</guid>
       <description></description>
     </item>
     <item>
       <title>Test</title>
-      <link>http://example.org/tags/test/</link>
+      <link>http://localhost:1313/tags/test/</link>
       <pubDate>Thu, 27 Mar 2025 00:00:00 +0000</pubDate>
-      <guid>http://example.org/tags/test/</guid>
+      <guid>http://localhost:1313/tags/test/</guid>
       <description></description>
     </item>
     <item>
       <title>Clojure</title>
-      <link>http://example.org/tags/clojure/</link>
+      <link>http://localhost:1313/tags/clojure/</link>
       <pubDate>Tue, 18 Dec 2012 00:00:00 +0000</pubDate>
-      <guid>http://example.org/tags/clojure/</guid>
+      <guid>http://localhost:1313/tags/clojure/</guid>
       <description></description>
     </item>
     <item>
       <title>Csharp</title>
-      <link>http://example.org/tags/csharp/</link>
+      <link>http://localhost:1313/tags/csharp/</link>
       <pubDate>Tue, 18 Dec 2012 00:00:00 +0000</pubDate>
-      <guid>http://example.org/tags/csharp/</guid>
+      <guid>http://localhost:1313/tags/csharp/</guid>
       <description></description>
     </item>
     <item>
       <title>Haskell</title>
-      <link>http://example.org/tags/haskell/</link>
+      <link>http://localhost:1313/tags/haskell/</link>
       <pubDate>Tue, 18 Dec 2012 00:00:00 +0000</pubDate>
-      <guid>http://example.org/tags/haskell/</guid>
+      <guid>http://localhost:1313/tags/haskell/</guid>
       <description></description>
     </item>
     <item>
       <title>Java</title>
-      <link>http://example.org/tags/java/</link>
+      <link>http://localhost:1313/tags/java/</link>
       <pubDate>Tue, 18 Dec 2012 00:00:00 +0000</pubDate>
-      <guid>http://example.org/tags/java/</guid>
+      <guid>http://localhost:1313/tags/java/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>JMM</title>
+      <link>http://localhost:1313/tags/jmm/</link>
+      <pubDate>Sun, 22 May 2005 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/tags/jmm/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Threads</title>
+      <link>http://localhost:1313/tags/threads/</link>
+      <pubDate>Sun, 22 May 2005 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/tags/threads/</guid>
       <description></description>
     </item>
   </channel>

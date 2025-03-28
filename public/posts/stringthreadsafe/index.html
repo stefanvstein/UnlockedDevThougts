@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <meta charset="UTF-8">
+  <title>Strings: Thread Safe at Last</title>
+  <link rel="stylesheet" href="/css/custom.css">
+  <script src="https://cdn.jsdelivr.net/npm/prismjs/prism.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs/components/prism-java.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs/components/prism-python.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs/components/prism-clojure.min.js"></script>
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs/themes/prism.css">
+  <script src="https://cdn.jsdelivr.net/npm/prismjs/plugins/line-highlight/prism-line-highlight.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs/plugins/line-highlight/prism-line-highlight.css">
+</head>
+
+<body>
+  <header>
+    <h1>UnlockedDevThoughts</h1>
+  </header>
+  <main>
+    
+  <article>
+    <h2>Strings: Thread Safe at Last</h2>
+    <p><em>2005-05-22</em></p>
+    <p>Yes! The class <code>java.lang.String</code> wasn’t officially thread-safe—according to the Java specification—until Java 1.5.</p>
+<p>Now, <code>String</code> is designed to be immutable, which inherently <em>should</em> make it thread-safe. Its internal state is set during construction and can&rsquo;t be changed afterward. Internally, a <code>String</code> consists of a character array and two integers that define the range of characters representing the string. All these fields are declared <code>final</code>.</p>
+<p>The issue? Version 2 of the <em>Java Language Specification</em>, specifically chapter 17, didn’t mention anything about <code>final</code> fields. This meant we couldn’t guarantee that another thread would see a properly initialized object, unless additional memory barriers (like <code>synchronized</code>) were in place. Without those, visibility of final fields across threads wasn’t ensured.</p>
+<p>Take the <code>substring()</code> method as an example: it returns a new <code>String</code> object that shares the same underlying character array but with different range integers. Neither the constructor nor <code>substring()</code> uses synchronization. So if one thread constructs a substring and passes it to another, there&rsquo;s a risk that the receiving thread might see an inconsistent state—a string that doesn’t represent the expected value. Immutability alone wasn’t enough.</p>
+<p>But with Java 5 (and the third edition of the spec), that changed. The language now guarantees that <code>final</code> fields are visible to other threads <em>after</em> the constructor finishes. This means that any other thread accessing the newly constructed object is guaranteed to see the fully initialized values.</p>
+<p>So finally—yes, <em>finally</em>—<code>String</code> is thread-safe, even by the book.</p>
+
+  </article>
+
+  </main>
+  <footer>
+    <p>&copy; 2025 Stefan GPT-blogg</p>
+  </footer>
+</body>
+</html>

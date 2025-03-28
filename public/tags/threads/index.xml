@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Threads on UnlockedDevThoughts</title>
+    <link>http://localhost:1313/tags/threads/</link>
+    <description>Recent content in Threads on UnlockedDevThoughts</description>
+    <generator>Hugo</generator>
+    <language>en-us</language>
+    <lastBuildDate>Sun, 22 May 2005 00:00:00 +0000</lastBuildDate>
+    <atom:link href="http://localhost:1313/tags/threads/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Strings: Thread Safe at Last</title>
+      <link>http://localhost:1313/posts/stringthreadsafe/</link>
+      <pubDate>Sun, 22 May 2005 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/stringthreadsafe/</guid>
+      <description>&lt;p&gt;Yes! The class &lt;code&gt;java.lang.String&lt;/code&gt; wasn’t officially thread-safe—according to the Java specification—until Java 1.5.&lt;/p&gt;&#xA;&lt;p&gt;Now, &lt;code&gt;String&lt;/code&gt; is designed to be immutable, which inherently &lt;em&gt;should&lt;/em&gt; make it thread-safe. Its internal state is set during construction and can&amp;rsquo;t be changed afterward. Internally, a &lt;code&gt;String&lt;/code&gt; consists of a character array and two integers that define the range of characters representing the string. All these fields are declared &lt;code&gt;final&lt;/code&gt;.&lt;/p&gt;&#xA;&lt;p&gt;The issue? Version 2 of the &lt;em&gt;Java Language Specification&lt;/em&gt;, specifically chapter 17, didn’t mention anything about &lt;code&gt;final&lt;/code&gt; fields. This meant we couldn’t guarantee that another thread would see a properly initialized object, unless additional memory barriers (like &lt;code&gt;synchronized&lt;/code&gt;) were in place. Without those, visibility of final fields across threads wasn’t ensured.&lt;/p&gt;</description>
+    </item>
+  </channel>
+</rss>
