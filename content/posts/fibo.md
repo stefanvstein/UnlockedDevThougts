@@ -1,7 +1,7 @@
 ---
 title: "Fibo"
 date: 2012-12-18
-tags: ["clojure", "haskell", "java", "C#"]
+tags: ["clojure", "haskell", "java", "Csharp"]
 ---
 
 In a study group discussing Domain-Driven Design (DDD), someone jokingly remarked that DDD doesn't suit functional programming (FP), saying something along the lines of: "Because in FP you use a language where you implement the Fibonacci sequence using recursion." It might have been another typical calculation used to introduce FP concepts. I can’t recall exactly.

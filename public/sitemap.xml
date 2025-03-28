@@ -2,54 +2,54 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
-    <loc>http://localhost:1313/posts/css-test/</loc>
+    <loc>http://example.org/posts/css-test/</loc>
     <lastmod>2025-03-27T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/posts/prism-multi-highlight/</loc>
+    <loc>http://example.org/posts/prism-multi-highlight/</loc>
     <lastmod>2025-03-27T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/tags/highlight/</loc>
+    <loc>http://example.org/tags/highlight/</loc>
     <lastmod>2025-03-27T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/tags/layout/</loc>
+    <loc>http://example.org/tags/layout/</loc>
     <lastmod>2025-03-27T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/posts/</loc>
+    <loc>http://example.org/posts/</loc>
     <lastmod>2025-03-27T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/tags/prism/</loc>
+    <loc>http://example.org/tags/prism/</loc>
     <lastmod>2025-03-27T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/</loc>
+    <loc>http://example.org/</loc>
     <lastmod>2025-03-27T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/tags/stil/</loc>
+    <loc>http://example.org/tags/stil/</loc>
     <lastmod>2025-03-27T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/tags/</loc>
+    <loc>http://example.org/tags/</loc>
     <lastmod>2025-03-27T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/tags/test/</loc>
+    <loc>http://example.org/tags/test/</loc>
     <lastmod>2025-03-27T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/posts/line-highlight-test/</loc>
+    <loc>http://example.org/posts/line-highlight-test/</loc>
     <lastmod>2025-03-26T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/tags/c%23/</loc>
+    <loc>http://example.org/tags/clojure/</loc>
     <lastmod>2012-12-18T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/tags/clojure/</loc>
+    <loc>http://example.org/tags/csharp/</loc>
     <lastmod>2012-12-18T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/posts/fibo/</loc>
+    <loc>http://example.org/posts/fibo/</loc>
     <lastmod>2012-12-18T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/tags/haskell/</loc>
+    <loc>http://example.org/tags/haskell/</loc>
     <lastmod>2012-12-18T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/tags/java/</loc>
+    <loc>http://example.org/tags/java/</loc>
     <lastmod>2012-12-18T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/categories/</loc>
+    <loc>http://example.org/categories/</loc>
   </url>
 </urlset>
