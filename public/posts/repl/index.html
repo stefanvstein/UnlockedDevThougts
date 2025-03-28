@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <meta charset="UTF-8">
+  <title>REPL: Like art</title>
+  <link rel="stylesheet" href="/css/custom.css">
+  <script src="https://cdn.jsdelivr.net/npm/prismjs/prism.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs/components/prism-java.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs/components/prism-python.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs/components/prism-clojure.min.js"></script>
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs/themes/prism.css">
+  <script src="https://cdn.jsdelivr.net/npm/prismjs/plugins/line-highlight/prism-line-highlight.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs/plugins/line-highlight/prism-line-highlight.css">
+</head>
+
+<body>
+  <header>
+    <h1>UnlockedDevThoughts</h1>
+  </header>
+  <main>
+    
+  <article>
+    <h2>REPL: Like art</h2>
+    <p><em>2013-05-25</em></p>
+    <p>A REPL—short for <em>Read, Eval, Print, Loop</em>—is the primary development tool in dynamically compiled languages. REPLs are heavily used in languages like Ruby, Python, JavaScript, F#, Scala, Haskell, and especially in the Lisp family of languages. A REPL lets you try out expressions and forms the foundation of test-driven development in its purest form. An editor with a REPL is an IDE in its most minimal and distilled form.</p>
+<p>Below is a primitive REPL implementation in Clojure, a Lisp dialect:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-clojure" data-lang="clojure"><span class="line"><span class="cl"><span class="p">(</span><span class="kd">defmacro </span><span class="nv">Loop</span> <span class="p">[</span><span class="o">&amp;</span> <span class="nv">body</span><span class="p">]</span> <span class="o">`</span><span class="p">(</span><span class="k">loop </span><span class="p">[]</span> <span class="o">~@</span><span class="nv">body</span> <span class="p">(</span><span class="nf">recur</span><span class="p">)))</span>
+</span></span><span class="line"><span class="cl"><span class="p">(</span><span class="k">let </span><span class="p">[</span><span class="nb">print </span><span class="nv">println</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">  <span class="p">(</span><span class="nb">-&gt; </span><span class="p">(</span><span class="nf">read</span><span class="p">)</span> <span class="p">(</span><span class="nf">eval</span><span class="p">)</span> <span class="p">(</span><span class="nf">print</span><span class="p">)</span> <span class="p">(</span><span class="nf">Loop</span><span class="p">)))</span>
+</span></span></code></pre></div><p>Sure, it reads easily—<code>read</code>, <code>eval</code>, <code>print</code>, <code>loop</code>—spelled out in plain text. But it’s harder to grasp what’s actually happening.</p>
+<p>The same logic can be written even shorter as:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-clojure" data-lang="clojure"><span class="line"><span class="cl"><span class="p">(</span><span class="nf">-&gt;&gt;</span> <span class="p">(</span><span class="nf">read</span><span class="p">)</span> <span class="p">(</span><span class="nf">eval</span><span class="p">)</span> <span class="p">(</span><span class="nf">println</span><span class="p">)</span> <span class="p">(</span><span class="nf">while</span> <span class="nv">true</span><span class="p">))</span>
+</span></span></code></pre></div><p>&hellip;but that can’t be read aloud as <em>REPL</em>.</p>
+<p>The first line:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-clojure" data-lang="clojure"><span class="line"><span class="cl"><span class="p">(</span><span class="kd">defmacro </span><span class="nv">Loop</span> <span class="p">[</span><span class="o">&amp;</span> <span class="nv">body</span><span class="p">]</span> <span class="o">`</span><span class="p">(</span><span class="k">loop </span><span class="p">[]</span> <span class="o">~@</span><span class="nv">body</span> <span class="p">(</span><span class="nf">recur</span><span class="p">)))</span>
+</span></span></code></pre></div><p>&hellip;is a macro defining unconditional iteration, like <code>(while true)</code> but with no condition. More accurately, it recursively iterates over the expansion of the body list passed to <code>looop</code>. The built-in <code>loop</code> establishes a recursion point, and <code>recur</code> jumps back to it in a tail-recursive manner. Since <code>Loop</code> is a macro, a code pattern rather than a function, we need <code>loop</code> to define the known target for recursion. We named it <code>Loop</code> because <code>loop</code> already exists in Clojure, and redefining it would be bad hygiene.</p>
+<p>The element <code>while</code> is also a macro, which could be written similarly but with a condition:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-clojure" data-lang="clojure"><span class="line"><span class="cl"><span class="p">(</span><span class="kd">defmacro </span><span class="nv">while</span> <span class="p">[</span><span class="nb">test </span><span class="o">&amp;</span> <span class="nv">body</span><span class="p">]</span> <span class="o">`</span><span class="p">(</span><span class="k">loop </span><span class="p">[]</span> <span class="p">(</span><span class="nb">when </span><span class="o">~</span><span class="nb">test </span><span class="o">~@</span><span class="nv">body</span> <span class="p">(</span><span class="nf">recur</span><span class="p">))))</span>
+</span></span></code></pre></div><p>So the <code>Loop</code> macro could be implemented as:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-clojure" data-lang="clojure"><span class="line"><span class="cl"><span class="p">(</span><span class="kd">defmacro </span><span class="nv">Loop</span> <span class="p">[</span><span class="o">&amp;</span> <span class="nv">body</span><span class="p">]</span> <span class="o">`</span><span class="p">(</span><span class="nf">while</span> <span class="nv">true</span> <span class="o">~@</span><span class="nv">body</span><span class="p">))</span>
+</span></span></code></pre></div><p>This line:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-clojure" data-lang="clojure"><span class="line"><span class="cl"><span class="p">(</span><span class="k">let </span><span class="p">[</span><span class="nb">print </span><span class="nv">println</span><span class="p">]</span> <span class="nv">...</span><span class="p">)</span>
+</span></span></code></pre></div><p>&hellip;binds the function <code>println</code> to the local name <code>print</code> within the expression body.</p>
+<p>And finally, our main expression:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-clojure" data-lang="clojure"><span class="line"><span class="cl"><span class="p">(</span><span class="nb">-&gt; </span><span class="p">(</span><span class="nf">read</span><span class="p">)</span> <span class="p">(</span><span class="nf">eval</span><span class="p">)</span> <span class="p">(</span><span class="nf">print</span><span class="p">)</span> <span class="p">(</span><span class="nf">Loop</span><span class="p">))</span>
+</span></span></code></pre></div><p>&hellip;is passed as the body of the <code>let</code>, where <code>println</code> is now also named <code>print</code>.</p>
+<p>This is also a macro. It expands like this:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-clojure" data-lang="clojure"><span class="line"><span class="cl"><span class="p">(</span><span class="nf">Loop</span> <span class="p">(</span><span class="nb">-&gt; </span><span class="p">(</span><span class="nf">read</span><span class="p">)</span> <span class="p">(</span><span class="nf">eval</span><span class="p">)</span> <span class="p">(</span><span class="nf">print</span><span class="p">)))</span>
+</span></span><span class="line"><span class="cl"><span class="err">→</span> <span class="p">(</span><span class="nf">Loop</span> <span class="p">(</span><span class="nb">print </span><span class="p">(</span><span class="nb">-&gt; </span><span class="p">(</span><span class="nf">read</span><span class="p">)</span> <span class="p">(</span><span class="nf">eval</span><span class="p">))))</span>
+</span></span><span class="line"><span class="cl"><span class="err">→</span> <span class="p">(</span><span class="nf">Loop</span> <span class="p">(</span><span class="nb">print </span><span class="p">(</span><span class="nb">eval </span><span class="p">(</span><span class="nf">read</span><span class="p">))))</span>
+</span></span></code></pre></div><p>The function <code>read</code> reads a data structure from input. And since Lisp—and Clojure—code <em>is</em> data structures, <code>read</code> reads code. The function <code>eval</code> evaluates that structure. If it’s a list, surrounded by parentheses, it gets executed. The <code>print</code> function (renamed <code>println</code>) prints the result with a newline.</p>
+<p>Then the macro <code>looop</code>, which we defined ourselves, unconditionally repeats the rest of the expression. It finally expands into:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-clojure" data-lang="clojure"><span class="line"><span class="cl"><span class="p">(</span><span class="k">loop </span><span class="p">[]</span> <span class="p">(</span><span class="nb">print </span><span class="p">(</span><span class="nb">eval </span><span class="p">(</span><span class="nf">read</span><span class="p">)))</span> <span class="p">(</span><span class="nf">recur</span><span class="p">))</span>
+</span></span></code></pre></div><p>The threading macro <code>-&gt;&gt;</code> (used in <code>(-&gt;&gt; (read) (eval) (println) (while true))</code>) behaves like <code>-&gt;</code>, but inserts the expression as the last argument instead of the second. So:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-clojure" data-lang="clojure"><span class="line"><span class="cl"><span class="p">(</span><span class="nb">-&gt; </span><span class="p">(</span><span class="nf">read</span><span class="p">)</span> <span class="p">(</span><span class="nf">eval</span><span class="p">)</span> <span class="p">(</span><span class="nf">println</span><span class="p">)</span> <span class="p">(</span><span class="nf">while</span> <span class="nv">true</span><span class="p">))</span>
+</span></span></code></pre></div><p>&hellip;would expand to:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-clojure" data-lang="clojure"><span class="line"><span class="cl"><span class="p">(</span><span class="nf">while</span> <span class="p">(</span><span class="nb">println </span><span class="p">(</span><span class="nb">eval </span><span class="p">(</span><span class="nf">read</span><span class="p">)))</span> <span class="nv">true</span><span class="p">)</span>
+</span></span></code></pre></div><p>&hellip;instead of:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-clojure" data-lang="clojure"><span class="line"><span class="cl"><span class="p">(</span><span class="nf">while</span> <span class="nv">true</span> <span class="p">(</span><span class="nb">println </span><span class="p">(</span><span class="nb">eval </span><span class="p">(</span><span class="nf">read</span><span class="p">))))</span>
+</span></span></code></pre></div><p>We probably need some error handlign. You do make misstake in a repl. Eval will throw exception, and exit the loop</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-clojure" data-lang="clojure"><span class="line"><span class="cl"><span class="p">(</span><span class="kd">defmacro </span><span class="nv">Loop</span> <span class="p">[</span><span class="o">&amp;</span> <span class="nv">body</span><span class="p">]</span> <span class="o">`</span><span class="p">(</span><span class="k">loop </span><span class="p">[]</span> <span class="o">~@</span><span class="nv">body</span> <span class="p">(</span><span class="nf">recur</span><span class="p">)))</span>
+</span></span><span class="line"><span class="cl"><span class="p">(</span><span class="k">let </span><span class="p">[</span><span class="nb">print </span><span class="nv">println</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">  <span class="p">(</span><span class="nb">-&gt; </span><span class="p">(</span><span class="nf">read</span><span class="p">)</span> <span class="p">(</span><span class="nf">eval</span><span class="p">)</span> <span class="p">(</span><span class="nf">print</span><span class="p">)</span> <span class="p">(</span><span class="nf">Loop</span><span class="p">)))</span>
+</span></span></code></pre></div><p>If we catch and return the exceptions to print, we will see the exception and can gracefully continue</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-clojure" data-lang="clojure"><span class="line"><span class="cl"><span class="p">(</span><span class="kd">defmacro </span><span class="nv">Loop</span> <span class="p">[</span><span class="o">&amp;</span> <span class="nv">body</span><span class="p">]</span> <span class="o">`</span><span class="p">(</span><span class="k">loop </span><span class="p">[]</span> <span class="o">~@</span><span class="nv">body</span> <span class="p">(</span><span class="nf">recur</span><span class="p">)))</span>
+</span></span><span class="line"><span class="cl"><span class="p">(</span><span class="kd">defmacro </span><span class="nv">Eval</span> <span class="p">[</span><span class="o">&amp;</span> <span class="nv">body</span><span class="p">]</span> <span class="o">`</span><span class="p">(</span><span class="nf">try</span> <span class="p">(</span><span class="nb">eval </span><span class="o">~@</span><span class="nv">body</span><span class="p">)</span> <span class="p">(</span><span class="nf">catch</span> <span class="nv">Exception</span> <span class="nv">e#</span> <span class="nv">e#</span><span class="p">)))</span>
+</span></span><span class="line"><span class="cl"><span class="p">(</span><span class="k">let </span><span class="p">[</span><span class="nb">print </span><span class="nv">println</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">  <span class="p">(</span><span class="nb">-&gt; </span><span class="p">(</span><span class="nf">read</span><span class="p">)</span> <span class="p">(</span><span class="nf">Eval</span><span class="p">)</span> <span class="p">(</span><span class="nf">print</span><span class="p">)</span> <span class="p">(</span><span class="nf">Loop</span><span class="p">)))</span>
+</span></span></code></pre></div><h3 id="instructions">Instructions</h3>
+<p>Save the source code into a file called <code>repl.clj</code>. Download <code>clojure.jar</code> from clojure.org, then let the hacking begin:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">&gt; java -jar clojure.jar repl.clj
+</span></span><span class="line"><span class="cl"><span class="o">(</span>+ <span class="m">4</span> 5<span class="o">)</span>
+</span></span><span class="line"><span class="cl"><span class="m">9</span>
+</span></span><span class="line"><span class="cl"><span class="o">(</span>defmacro Loop <span class="o">[</span><span class="p">&amp;</span> body<span class="o">]</span> <span class="sb">`</span><span class="o">(</span>loop <span class="o">[]</span> ~@body <span class="o">(</span>recur<span class="o">)))</span>
+</span></span><span class="line"><span class="cl"><span class="c1">#&#39;user/Loop</span>
+</span></span><span class="line"><span class="cl"><span class="o">(</span>defmacro Eval <span class="o">[</span><span class="p">&amp;</span> body<span class="o">]</span> <span class="sb">`</span><span class="o">(</span>try <span class="o">(</span><span class="nb">eval</span> ~@body<span class="o">)</span> <span class="o">(</span>catch Exception e# e#<span class="o">)))</span>
+</span></span><span class="line"><span class="cl"><span class="c1">#&#39;user/Eval</span>
+</span></span><span class="line"><span class="cl"><span class="o">(</span><span class="nb">let</span> <span class="o">[</span>print println<span class="o">]</span>
+</span></span><span class="line"><span class="cl">  <span class="o">(</span>-&gt; <span class="o">(</span><span class="nb">read</span><span class="o">)</span> <span class="o">(</span>Eval<span class="o">)</span> <span class="o">(</span>print<span class="o">)</span> <span class="o">(</span>Loop<span class="o">)))</span>
+</span></span><span class="line"><span class="cl"><span class="o">(</span>+ <span class="m">4</span> 3<span class="o">)</span>
+</span></span><span class="line"><span class="cl"><span class="m">7</span>
+</span></span><span class="line"><span class="cl"><span class="o">(</span>defmacro Loop <span class="o">[</span><span class="p">&amp;</span> body<span class="o">]</span> <span class="sb">`</span><span class="o">(</span>loop <span class="o">[]</span> ~@body <span class="o">(</span>recur<span class="o">)))</span>
+</span></span><span class="line"><span class="cl"><span class="c1">#&#39;user/Loop</span>
+</span></span></code></pre></div>
+  </article>
+
+  </main>
+  <footer>
+    <p>&copy; 2025 Stefan GPT-blogg</p>
+  </footer>
+</body>
+</html>
