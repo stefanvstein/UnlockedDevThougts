@@ -1,6 +1,7 @@
 baseURL = "http://example.org/"
 languageCode = "en-us"
-title = "Stefans GPT-blogg"
+title = "UnlockedDevThoughts"
+author = "Stefan von Stein"
 theme = "gpt"
 sectionPagesMenu = "main"
 defaultContentLanguage = "en"
