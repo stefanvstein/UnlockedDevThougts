@@ -1,0 +1,46 @@
+/* ===== Basic Page Layout ===== */
+body {
+  font-family: "Segoe UI", Roboto, sans-serif;
+  background-color: #f8f8f8;
+  color: #222;
+  padding: 4rem;
+  line-height: 1.6;
+}
+
+h1, h2, h3 {
+  color: #606060;
+  font-weight: 600;
+}
+
+a {
+/*  color: #1a73e8;*/
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+/* ===== Code Blocks ===== */
+pre {
+  background-color: #f8f8f8 !important;
+
+}
+.token.keyword {
+  color:  #333333 !important;
+
+}
+
+.token.class-name {
+  color:  #aaaaaa !important;
+
+  }
+
+
+/* funkar */
+pre[data-line] .line-highlight {
+  background: rgba(0, 0, 140, 0.07);
+
+}
+
+

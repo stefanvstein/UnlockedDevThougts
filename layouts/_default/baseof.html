@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="sv">
+{{ partial "head.html" . }}
+<body>
+  <header>
+    <h1>{{ .Site.Title }}</h1>
+  </header>
+  <main>
+    {{ block "main" . }}{{ end }}
+  </main>
+  <footer>
+    <p>&copy; 2025 Stefan GPT-blogg</p>
+  </footer>
+</body>
+</html>

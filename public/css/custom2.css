@@ -1,0 +1,53 @@
+body {
+  font-family: "Segoe UI", Roboto, sans-serif;
+  background-color: #fafafa;
+  color: #222;
+  padding: 2rem;
+  line-height: 1.6;
+}
+
+h1, h2, h3 {
+  color: #111;
+  font-weight: 600;
+}
+
+a {
+  color: #1a73e8;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+pre {
+  background-color: #f8f8ff;
+  border-radius: 8px;
+  padding: 1em;
+  overflow-x: auto;
+  position: relative;
+  font-size: 0.95em;
+  line-height: 1.5;
+  margin-bottom: 1.5em;
+}
+
+pre code {
+  background: none;
+  color: #2a2a2a;
+  font-family: "Fira Code", Consolas, monospace;
+}
+
+pre[data-line] {
+  position: relative;
+}
+
+pre[data-line] .line-highlight {
+  background: rgba(255, 240, 140, 0.6);
+  border-left: 4px solid #f1b400;
+  margin-left: -1em;
+  padding-left: 0.75em;
+}
+
+code[class*="language-"] {
+  white-space: pre;
+}

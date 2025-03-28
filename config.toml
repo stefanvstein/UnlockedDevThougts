@@ -1,0 +1,13 @@
+baseURL = "http://example.org/"
+languageCode = "en-us"
+title = "Stefans GPT-blogg"
+theme = "gpt"
+sectionPagesMenu = "main"
+defaultContentLanguage = "en"
+pygmentsUseClasses = true
+pygmentsCodeFences = true
+
+[markup]
+  [markup.goldmark]
+    [markup.goldmark.renderer]
+      unsafe = true

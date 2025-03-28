@@ -1,0 +1,99 @@
+/* ===== Global Settings ===== */
+body {
+  font-family: "Segoe UI", Roboto, sans-serif;
+  background-color: #f7f8fa; /* Lätt, nästan vit bakgrund */
+  color: #333;
+  padding: 2rem;
+  margin: 0;
+  line-height: 1.6;
+}
+
+/* ===== Header ===== */
+header {
+  background-color: #ffffff;
+  border-bottom: 1px solid #eaeaea;
+  padding: 1rem 2rem;
+  text-align: center;
+}
+
+/* ===== Footer ===== */
+footer {
+  background-color: #ffffff;
+  border-top: 1px solid #eaeaea;
+  padding: 1rem 2rem;
+  text-align: center;
+}
+
+/* ===== Main Content Area ===== */
+main {
+  max-width: 800px;
+  margin: 2rem auto;
+  padding: 2rem;
+  background: #ffffff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  border-radius: 8px;
+}
+
+/* ===== Headings ===== */
+h1, h2, h3 {
+  color: #111;
+  font-weight: 600;
+  margin-bottom: 0.5em;
+}
+
+/* ===== Links ===== */
+a {
+  color: #1a73e8;
+  text-decoration: none;
+}
+a:hover {
+  text-decoration: underline;
+}
+
+/* ===== Code Blocks ===== */
+pre {
+  background-color: #f8f8ff;  /* En ljus ton som fungerar bra med ren kod */
+  border-radius: 8px;
+  padding: 1em;
+  overflow-x: auto;
+  font-size: 0.95em;
+  line-height: 1.5;
+  margin-bottom: 1.5em;
+}
+pre code {
+  background: none;
+  color: #2a2a2a;
+  font-family: "Fira Code", Consolas, monospace;
+}
+
+/* ===== Prism Line Highlight Plugin ===== */
+pre[data-line] {
+  position: relative;
+}
+pre[data-line] .line-highlight {
+  background: rgba(255, 240, 140, 0.6);
+  border-left: 4px solid #f1b400;
+  margin-left: -1em;
+  padding-left: 0.75em;
+}
+
+/* ===== Prism Token Colors (Example Palette) ===== */
+code[class*="language-"] .token.keyword {
+  color: #9a6e3a !important;  /* Mörkguld, elegant och subtilt */
+  font-weight: 600;
+}
+code[class*="language-"] .token.string {
+  color: #2a9d8f !important;  /* En lugn, dämpad teal */
+}
+code[class*="language-"] .token.function {
+  color: #264653 !important;  /* Djup, mörk nyans för funktioner */
+}
+code[class*="language-"] .token.comment {
+  color: #6c757d !important;  /* Grå och italic för kommentarer */
+}
+
+/* ===== Optional: Adjust whitespace for code blocks ===== */
+code[class*="language-"],
+pre[class*="language-"] {
+  white-space: pre;
+}
