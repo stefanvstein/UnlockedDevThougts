@@ -228,7 +228,7 @@ You can update nested structures:
 ```clojure
 
 (assoc-in olle [:details :favorite-dish] "Paneng gai")
-```clojure
+```
 
 Or:
 

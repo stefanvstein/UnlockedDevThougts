@@ -8,9 +8,6 @@
     <loc>http://localhost:1313/posts/prism-multi-highlight/</loc>
     <lastmod>2025-03-27T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/posts/fibo/</loc>
-    <lastmod>2025-03-27T00:00:00+00:00</lastmod>
-  </url><url>
     <loc>http://localhost:1313/tags/highlight/</loc>
     <lastmod>2025-03-27T00:00:00+00:00</lastmod>
   </url><url>
@@ -37,6 +34,21 @@
   </url><url>
     <loc>http://localhost:1313/posts/line-highlight-test/</loc>
     <lastmod>2025-03-26T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/tags/c%23/</loc>
+    <lastmod>2012-12-18T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/tags/clojure/</loc>
+    <lastmod>2012-12-18T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/posts/fibo/</loc>
+    <lastmod>2012-12-18T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/tags/haskell/</loc>
+    <lastmod>2012-12-18T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/tags/java/</loc>
+    <lastmod>2012-12-18T00:00:00+00:00</lastmod>
   </url><url>
     <loc>http://localhost:1313/categories/</loc>
   </url>
