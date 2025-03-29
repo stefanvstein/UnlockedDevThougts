@@ -1,0 +1,159 @@
+---
+title: "Immutable Beans in Java"
+date: 2017-01-17
+slug: immutable-beans
+---
+
+## Immutable Beans
+
+Using `AtomicReference` to maintain user-defined immutable data types with transactional updates.
+
+Immutability is key to simple, predictable software. In Java, however, frameworks often push us toward mutability. Dependency injection often prefers mutable beans with setters. RPC mechanisms and GUI frameworks typically dictate state changes using imperative setters.
+
+### Mutable Bean Example
+
+```java
+public class Bean {
+    String something;
+    int small;
+
+    public int getSmall() { return small; }
+    public void setSmall(int small) { this.small = small; }
+
+    public String getSomething() { return something; }
+    public void setSomething(String something) { this.something = something; }
+}
+```
+
+### Immutable Alternative
+
+```java
+public class Immutable {
+    public final String something;
+    public final Integer small;
+
+    public Immutable(String something, Integer small) {
+        this.something = something;
+        this.small = small;
+    }
+
+    public static Immutable empty() {
+        return new Immutable(null, null);
+    }
+
+    public Immutable withSomething(String something) {
+        return new Immutable(something, this.small);
+    }
+
+    public Immutable withSmall(int small) {
+        return new Immutable(this.something, small);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof Immutable other)
+            return Objects.equals(something, other.something) && Objects.equals(small, other.small);
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(something, small);
+    }
+}
+```
+
+```java
+Immutable a = Immutable.empty();
+Immutable b = a.withSomething("nice");
+```
+
+You now have two distinct values. `a` remains unchanged, and `b` is a modified version of it.
+
+### Wrapping an Immutable in a Mutable Bean Interface
+
+```java
+public class Bean {
+    private Immutable value = Immutable.empty();
+
+    public String getSomething() { return value.something; }
+    public void setSomething(String something) {
+        value = value.withSomething(something);
+    }
+
+    public int getSmall() { return value.small; }
+    public void setSmall(int small) {
+        value = value.withSmall(small);
+    }
+
+    public Immutable currentValue() { return value; }
+}
+```
+
+This lets frameworks use the bean pattern, while keeping your business logic free from surprises.
+
+---
+
+## State Management with `AtomicReference`
+
+A single variable referencing a composite immutable value = **one source of truth**.
+
+```java
+public class StateVariable {
+    public static final AtomicReference<Immutable> state = new AtomicReference<>(Immutable.empty());
+
+    public static void setSomething(String something) {
+        state.updateAndGet(s -> s.withSomething(something));
+    }
+}
+```
+
+### Transactional Update with Custom Logic
+
+```java
+public static void transactSomething(UnaryOperator<String> transaction) {
+    state.updateAndGet(s -> s.withSomething(transaction.apply(s.something)));
+}
+```
+
+If you need access to the full `Immutable` value:
+
+```java
+public static void transact(UnaryOperator<Immutable> transaction) {
+    state.updateAndGet(transaction);
+}
+```
+
+### Conflict-Resistant Transaction with CAS
+
+```java
+public static void withSomethingOnly(UnaryOperator<String> trans) {
+    Immutable oldState = state.get();
+    String oldVal = oldState.something;
+    String newVal = trans.apply(oldVal);
+    Immutable newState = oldState.withSomething(newVal);
+
+    while (!state.compareAndSet(oldState, newState)) {
+        oldState = state.get();
+        if (!Objects.equals(oldVal, oldState.something)) {
+            oldVal = oldState.something;
+            newVal = trans.apply(oldVal);
+        }
+        newState = oldState.withSomething(newVal);
+    }
+}
+```
+
+This approach minimizes retries and avoids spinlocks by only recomputing values when necessary.
+
+---
+
+## Summary
+
+- You can work with Java frameworks expecting beans while preserving immutability.
+- `AtomicReference` enables transactional, thread-safe updates.
+- Treat state as a single immutable value that evolves over time.
+- Separate identity (reference) from state (value).
+
+Use immutability to simplify concurrency. The value returned is stable. The reference is all that changes.
+

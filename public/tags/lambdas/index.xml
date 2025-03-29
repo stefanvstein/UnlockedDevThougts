@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Lambdas on UnlockedDevThoughts</title>
+    <link>http://localhost:1313/tags/lambdas/</link>
+    <description>Recent content in Lambdas on UnlockedDevThoughts</description>
+    <generator>Hugo</generator>
+    <language>en-us</language>
+    <lastBuildDate>Sun, 06 Mar 2016 00:00:00 +0000</lastBuildDate>
+    <atom:link href="http://localhost:1313/tags/lambdas/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Java `cond` Expression</title>
+      <link>http://localhost:1313/posts/java-cond/</link>
+      <pubDate>Sun, 06 Mar 2016 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/java-cond/</guid>
+      <description>&lt;h2 id=&#34;java-cond&#34;&gt;Java &lt;code&gt;cond&lt;/code&gt;&lt;/h2&gt;&#xA;&lt;h3 id=&#34;implementing-cond-in-java&#34;&gt;Implementing &lt;code&gt;cond&lt;/code&gt; in Java&lt;/h3&gt;&#xA;&lt;p&gt;A friend of mine had to switch from writing Clojure to writing Java at his new job. Poor soul. One day, while staring at a mess of nested &lt;code&gt;if&lt;/code&gt; statements, he sighed:&lt;/p&gt;&#xA;&lt;blockquote&gt;&#xA;&lt;p&gt;“If only Java had &lt;code&gt;cond&lt;/code&gt;.”&lt;/p&gt;&lt;/blockquote&gt;&#xA;&lt;p&gt;For those unfamiliar, Clojure&amp;rsquo;s &lt;code&gt;cond&lt;/code&gt; is like a more expressive version of &lt;code&gt;switch-case&lt;/code&gt;, returning a single value based on a list of condition-result pairs.&lt;/p&gt;&#xA;&lt;p&gt;Here&amp;rsquo;s a simple Clojure example:&lt;/p&gt;</description>
+    </item>
+  </channel>
+</rss>

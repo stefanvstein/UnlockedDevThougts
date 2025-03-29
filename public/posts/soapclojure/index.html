@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <meta charset="UTF-8">
+  <title>Consuming SOAP Services with Clojure Macros</title>
+  <link rel="stylesheet" href="/css/custom.css">
+  <script src="https://cdn.jsdelivr.net/npm/prismjs/prism.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs/components/prism-java.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs/components/prism-python.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs/components/prism-clojure.min.js"></script>
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs/themes/prism.css">
+  <script src="https://cdn.jsdelivr.net/npm/prismjs/plugins/line-highlight/prism-line-highlight.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs/plugins/line-highlight/prism-line-highlight.css">
+</head>
+
+<body>
+  <header>
+    <h1>UnlockedDevThoughts</h1>
+  </header>
+  <main>
+    
+  <article>
+    <h2>Consuming SOAP Services with Clojure Macros</h2>
+    <p><em>2015-10-30</em></p>
+    <p>Two colleagues were consuming a SOAP service in Clojure and ran into some trouble. Being fairly new to Clojure, they struggled with mapping Java class hierarchies into Clojure keyword maps. They didn’t use the built-in <code>bean</code> function—partly because they didn’t know about it, and partly because they preferred a more controlled transformation.</p>
+<p>They generated the classes from WSDL using <code>wsimport</code>.</p>
+<h3 id="the-problem">The Problem</h3>
+<p>Let’s consider a simplified SOAP service implemented in Java:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">Foo</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="kd">public</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">name</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="kd">public</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">lastName</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="kd">public</span><span class="w"> </span><span class="nf">Foo</span><span class="p">(</span><span class="n">String</span><span class="w"> </span><span class="n">name</span><span class="p">,</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">lastName</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="k">this</span><span class="p">.</span><span class="na">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">name</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="k">this</span><span class="p">.</span><span class="na">lastName</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">lastName</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="kd">public</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="nf">getFullName</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">name</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&#34; &#34;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">lastName</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">Bar</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="kd">private</span><span class="w"> </span><span class="n">List</span><span class="o">&lt;</span><span class="n">Foo</span><span class="o">&gt;</span><span class="w"> </span><span class="n">foos</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="kd">public</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">noBaz</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="kd">private</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">quote</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="kd">public</span><span class="w"> </span><span class="nf">Bar</span><span class="p">(</span><span class="n">List</span><span class="o">&lt;</span><span class="n">Foo</span><span class="o">&gt;</span><span class="w"> </span><span class="n">foos</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">noBaz</span><span class="p">,</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">quoteOfTheDay</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="k">this</span><span class="p">.</span><span class="na">foos</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">foos</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="k">this</span><span class="p">.</span><span class="na">noBaz</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">noBaz</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="k">this</span><span class="p">.</span><span class="na">quote</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">quoteOfTheDay</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="kd">public</span><span class="w"> </span><span class="n">Iterable</span><span class="o">&lt;</span><span class="n">Foo</span><span class="o">&gt;</span><span class="w"> </span><span class="nf">foos</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">ArrayList</span><span class="o">&lt;&gt;</span><span class="p">(</span><span class="n">foos</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="kd">public</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="nf">getQuoteOfTheDay</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">quote</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span></code></pre></div><p>Manually translating an instance of <code>Bar</code> into a Clojure map would look like this:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-clojure" data-lang="clojure"><span class="line"><span class="cl"><span class="p">{</span><span class="ss">:no-baz</span> <span class="p">(</span><span class="nf">.-noBaz</span> <span class="nv">bar</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"> <span class="ss">:quote-of-the-day</span> <span class="p">(</span><span class="nf">.getQuoteOfTheDay</span> <span class="nv">bar</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"> <span class="ss">:foos</span> <span class="p">(</span><span class="nb">map </span><span class="p">(</span><span class="k">fn </span><span class="p">[</span><span class="nv">foo</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">              <span class="p">{</span><span class="ss">:name</span> <span class="p">(</span><span class="nf">.name</span> <span class="nv">foo</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">               <span class="ss">:last-name</span> <span class="p">(</span><span class="nf">.-lastName</span> <span class="nv">foo</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">               <span class="ss">:full-name</span> <span class="p">(</span><span class="nf">.getFullName</span> <span class="nv">foo</span><span class="p">)})</span>
+</span></span><span class="line"><span class="cl">            <span class="p">(</span><span class="nf">.foos</span> <span class="nv">bar</span><span class="p">))}</span>
+</span></span></code></pre></div><p>It’s verbose and error-prone. So I wrote a few macros to simplify it.</p>
+<h3 id="introducing-auto-key-map">Introducing <code>auto-key-map</code></h3>
+<p>This macro extracts fields and methods and automatically creates kebab-case keywords:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-clojure" data-lang="clojure"><span class="line"><span class="cl"><span class="p">(</span><span class="nf">auto-key-map</span> <span class="p">(</span><span class="nf">Foo.</span> <span class="s">&#34;Arne&#34;</span> <span class="s">&#34;Weise&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">              <span class="nv">.-name</span>
+</span></span><span class="line"><span class="cl">              <span class="nv">.-lastName</span>
+</span></span><span class="line"><span class="cl">              <span class="nv">.getFullName</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="c1">;; =&gt; {:name &#34;Arne&#34; :last-name &#34;Weise&#34; :full-name &#34;Arne Weise&#34;}</span>
+</span></span></code></pre></div><p>We also define macros for handling collections:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-clojure" data-lang="clojure"><span class="line"><span class="cl"><span class="p">(</span><span class="nf">auto-key-map-each</span> <span class="nv">bar</span> <span class="nv">.foos</span>
+</span></span><span class="line"><span class="cl">                        <span class="nv">.-name</span>
+</span></span><span class="line"><span class="cl">                        <span class="nv">.-lastName</span>
+</span></span><span class="line"><span class="cl">                        <span class="nv">.getFullName</span><span class="p">)</span>
+</span></span></code></pre></div><p>This produces a map with a key derived from the accessor (<code>:foos</code>), and a sequence of extracted maps.</p>
+<h3 id="full-example">Full Example</h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-clojure" data-lang="clojure"><span class="line"><span class="cl"><span class="p">(</span><span class="nb">merge </span><span class="p">(</span><span class="nf">auto-key-map</span> <span class="nv">bar</span>
+</span></span><span class="line"><span class="cl">                     <span class="nv">.-noBaz</span>
+</span></span><span class="line"><span class="cl">                     <span class="nv">.getQuoteOfTheDay</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">       <span class="p">(</span><span class="nf">auto-key-map-each</span> <span class="nv">bar</span> <span class="nv">.foos</span>
+</span></span><span class="line"><span class="cl">                               <span class="nv">.-name</span>
+</span></span><span class="line"><span class="cl">                               <span class="nv">.-lastName</span>
+</span></span><span class="line"><span class="cl">                               <span class="nv">.getFullName</span><span class="p">))</span>
+</span></span></code></pre></div><p>Result:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-clojure" data-lang="clojure"><span class="line"><span class="cl"><span class="p">{</span><span class="ss">:no-baz</span> <span class="mi">32</span>
+</span></span><span class="line"><span class="cl"> <span class="ss">:quote-of-the-day</span> <span class="s">&#34;Try simplicity&#34;</span>
+</span></span><span class="line"><span class="cl"> <span class="ss">:foos</span> <span class="p">({</span><span class="ss">:name</span> <span class="s">&#34;Alan&#34;</span> <span class="ss">:last-name</span> <span class="s">&#34;Boris&#34;</span> <span class="ss">:full-name</span> <span class="s">&#34;Alan Boris&#34;</span><span class="p">}</span>
+</span></span><span class="line"><span class="cl">        <span class="p">{</span><span class="ss">:name</span> <span class="s">&#34;Ceasar&#34;</span> <span class="ss">:last-name</span> <span class="s">&#34;Davis&#34;</span> <span class="ss">:full-name</span> <span class="s">&#34;Ceasar Davis&#34;</span><span class="p">}</span>
+</span></span><span class="line"><span class="cl">        <span class="p">{</span><span class="ss">:name</span> <span class="s">&#34;Elvis&#34;</span> <span class="ss">:last-name</span> <span class="s">&#34;Foley&#34;</span> <span class="ss">:full-name</span> <span class="s">&#34;Elvis Foley&#34;</span><span class="p">})}</span>
+</span></span></code></pre></div><p>If you don’t want the collection as a map entry, use <code>auto-key-map-seq</code>:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-clojure" data-lang="clojure"><span class="line"><span class="cl"><span class="p">(</span><span class="nb">assoc </span><span class="p">(</span><span class="nf">auto-key-map</span> <span class="nv">bar</span>
+</span></span><span class="line"><span class="cl">                     <span class="nv">.-noBaz</span>
+</span></span><span class="line"><span class="cl">                     <span class="nv">.getQuoteOfTheDay</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">       <span class="ss">:foos-vec</span> <span class="p">(</span><span class="nf">vec</span> <span class="p">(</span><span class="nf">auto-key-map-seq</span> <span class="p">(</span><span class="nf">.foos</span> <span class="nv">bar</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">                                        <span class="nv">.-name</span>
+</span></span><span class="line"><span class="cl">                                        <span class="nv">.-lastName</span>
+</span></span><span class="line"><span class="cl">                                        <span class="nv">.getFullName</span><span class="p">)))</span>
+</span></span></code></pre></div><h3 id="custom-naming-with-key-map">Custom Naming with <code>key-map</code></h3>
+<p>Sometimes, you want manual control:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-clojure" data-lang="clojure"><span class="line"><span class="cl"><span class="p">(</span><span class="nf">key-map</span> <span class="p">(</span><span class="nf">Foo.</span> <span class="s">&#34;Arne&#34;</span> <span class="s">&#34;Weise&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">         <span class="ss">:family</span> <span class="nv">.-lastName</span>
+</span></span><span class="line"><span class="cl">         <span class="ss">:all</span> <span class="nv">.getFullName</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="c1">;; =&gt; {:family &#34;Weise&#34; :all &#34;Arne Weise&#34;}</span>
+</span></span></code></pre></div><p>Supports <code>some-&gt;</code> threading:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-clojure" data-lang="clojure"><span class="line"><span class="cl"><span class="p">(</span><span class="nf">key-map</span> <span class="p">(</span><span class="nf">Foo.</span> <span class="s">&#34;Arne&#34;</span> <span class="s">&#34;Weise&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">         <span class="ss">:len</span> <span class="p">[</span><span class="nv">.-name</span> <span class="nv">.length</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl"><span class="c1">;; =&gt; {:len 4}</span>
+</span></span></code></pre></div><h3 id="nested-structures">Nested Structures</h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-clojure" data-lang="clojure"><span class="line"><span class="cl"><span class="p">(</span><span class="nb">merge </span><span class="p">(</span><span class="nf">key-map-each-fn</span> <span class="nv">bar</span> <span class="nv">.foos</span> <span class="ss">:foos</span>
+</span></span><span class="line"><span class="cl">                                <span class="ss">:first-len</span> <span class="p">[</span><span class="nv">.-name</span> <span class="nv">.length</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">                                <span class="ss">:last</span> <span class="nv">.-lastName</span>
+</span></span><span class="line"><span class="cl">                                <span class="ss">:full-name</span> <span class="nv">.getFullName</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">       <span class="p">(</span><span class="nf">auto-key-map</span> <span class="nv">bar</span> <span class="nv">.-noBaz</span> <span class="nv">.getQuoteOfTheDay</span><span class="p">))</span>
+</span></span></code></pre></div><p>Result:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-clojure" data-lang="clojure"><span class="line"><span class="cl"><span class="p">{</span><span class="ss">:no-baz</span> <span class="mi">32</span>, <span class="ss">:quote-of-the-day</span> <span class="s">&#34;Try simplicity&#34;</span>,
+</span></span><span class="line"><span class="cl"> <span class="ss">:foos</span> <span class="p">({</span><span class="ss">:first-len</span> <span class="mi">4</span>, <span class="ss">:last</span> <span class="s">&#34;Boris&#34;</span>, <span class="ss">:full-name</span> <span class="s">&#34;Alan Boris&#34;</span><span class="p">}</span>
+</span></span><span class="line"><span class="cl">        <span class="p">{</span><span class="ss">:first-len</span> <span class="mi">6</span>, <span class="ss">:last</span> <span class="s">&#34;Davis&#34;</span>, <span class="ss">:full-name</span> <span class="s">&#34;Ceasar Davis&#34;</span><span class="p">}</span>
+</span></span><span class="line"><span class="cl">        <span class="p">{</span><span class="ss">:first-len</span> <span class="mi">5</span>, <span class="ss">:last</span> <span class="s">&#34;Foley&#34;</span>, <span class="ss">:full-name</span> <span class="s">&#34;Elvis Foley&#34;</span><span class="p">})}</span>
+</span></span></code></pre></div><p>These macros help create readable Clojure maps from Java interop, reduce boilerplate, and are useful well beyond SOAP parsing.</p>
+
+  </article>
+
+  </main>
+  <footer>
+    <p>&copy; 2025 Stefan GPT-blogg</p>
+  </footer>
+</body>
+</html>

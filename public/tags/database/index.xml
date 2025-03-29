@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Database on UnlockedDevThoughts</title>
+    <link>http://localhost:1313/tags/database/</link>
+    <description>Recent content in Database on UnlockedDevThoughts</description>
+    <generator>Hugo</generator>
+    <language>en-us</language>
+    <lastBuildDate>Sat, 08 Oct 2016 00:00:00 +0000</lastBuildDate>
+    <atom:link href="http://localhost:1313/tags/database/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Isolation Levels and Write Skew</title>
+      <link>http://localhost:1313/posts/isolation-and-skew/</link>
+      <pubDate>Sat, 08 Oct 2016 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/isolation-and-skew/</guid>
+      <description>&lt;p&gt;A few notes on isolation levels in relational databases—and a tricky little issue called &lt;em&gt;write skew&lt;/em&gt;.&lt;/p&gt;&#xA;&lt;hr&gt;&#xA;&lt;h2 id=&#34;isolation-levels-in-brief&#34;&gt;Isolation Levels in Brief&lt;/h2&gt;&#xA;&lt;p&gt;Most relational databases default to the &lt;strong&gt;Read Committed&lt;/strong&gt; isolation level. This prevents dirty reads, but does &lt;em&gt;not&lt;/em&gt; protect you from more subtle anomalies such as &lt;strong&gt;read skew&lt;/strong&gt; or &lt;strong&gt;write skew&lt;/strong&gt;.&lt;/p&gt;&#xA;&lt;h3 id=&#34;read-skew-example&#34;&gt;Read Skew Example&lt;/h3&gt;&#xA;&lt;p&gt;Imagine one user moves data from location X to location Y, ensuring a value (say, 100 units) is transferred. If another user reads both locations during this operation, they might observe the same value in &lt;em&gt;both&lt;/em&gt; places temporarily. That&amp;rsquo;s &lt;strong&gt;read skew&lt;/strong&gt;: the illusion of duplicated data due to timing.&lt;/p&gt;</description>
+    </item>
+  </channel>
+</rss>

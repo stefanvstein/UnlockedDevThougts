@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <meta charset="UTF-8">
+  <title>Isolation Levels and Write Skew</title>
+  <link rel="stylesheet" href="/css/custom.css">
+  <script src="https://cdn.jsdelivr.net/npm/prismjs/prism.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs/components/prism-java.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs/components/prism-python.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs/components/prism-clojure.min.js"></script>
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs/themes/prism.css">
+  <script src="https://cdn.jsdelivr.net/npm/prismjs/plugins/line-highlight/prism-line-highlight.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs/plugins/line-highlight/prism-line-highlight.css">
+</head>
+
+<body>
+  <header>
+    <h1>UnlockedDevThoughts</h1>
+  </header>
+  <main>
+    
+  <article>
+    <h2>Isolation Levels and Write Skew</h2>
+    <p><em>2016-10-08</em></p>
+    <p>A few notes on isolation levels in relational databases—and a tricky little issue called <em>write skew</em>.</p>
+<hr>
+<h2 id="isolation-levels-in-brief">Isolation Levels in Brief</h2>
+<p>Most relational databases default to the <strong>Read Committed</strong> isolation level. This prevents dirty reads, but does <em>not</em> protect you from more subtle anomalies such as <strong>read skew</strong> or <strong>write skew</strong>.</p>
+<h3 id="read-skew-example">Read Skew Example</h3>
+<p>Imagine one user moves data from location X to location Y, ensuring a value (say, 100 units) is transferred. If another user reads both locations during this operation, they might observe the same value in <em>both</em> places temporarily. That&rsquo;s <strong>read skew</strong>: the illusion of duplicated data due to timing.</p>
+<p><img src="/images/read-skew.png" alt="Figure 1: Read skew scenario"></p>
+<p>To prevent this, you can increase the isolation level.</p>
+<hr>
+<h2 id="serializable-vs-snapshot-isolation">Serializable vs Snapshot Isolation</h2>
+<ul>
+<li>
+<p><strong>Serializable isolation</strong> means operations behave <em>as if</em> executed sequentially. This is the strongest level and guarantees full consistency—but it&rsquo;s expensive.</p>
+</li>
+<li>
+<p><strong>Snapshot isolation</strong> is cheaper. Each transaction gets a consistent view of the data, and conflicting writes cause failure.</p>
+</li>
+</ul>
+<p>However, snapshot isolation doesn&rsquo;t protect against <strong>write skew</strong>.</p>
+<h3 id="write-skew-example">Write Skew Example</h3>
+<p>Imagine two users reading shared data with a rule that at least one of two fields must remain true. Each transaction reads, validates that the rule holds, and writes a change. But if both users update the same fields simultaneously, the invariant might break—because each acted on an outdated view.</p>
+<p><img src="/images/write-skew.png" alt="Figure 2: Write skew anomaly"></p>
+<hr>
+<h2 id="reality-in-practice">Reality in Practice</h2>
+<p>Some databases, such as <strong>Oracle</strong>, don&rsquo;t support true serializable isolation. Their &ldquo;serializable&rdquo; mode is really snapshot isolation under the hood.</p>
+<h3 id="workarounds">Workarounds</h3>
+<ul>
+<li><strong>Single Writer Principle:</strong> Achieve serializability by allowing only one writer process.</li>
+<li><strong>Explicit Locks:</strong> Lock all rows or objects you read during the transaction to avoid skew.</li>
+</ul>
+<p>These methods ensure correctness—though at the cost of concurrency.</p>
+<hr>
+<p>Isolation levels aren&rsquo;t just theoretical—they shape the behavior of concurrent applications. Choosing the right level (and knowing its limits) is crucial for correctness.</p>
+
+  </article>
+
+  </main>
+  <footer>
+    <p>&copy; 2025 Stefan GPT-blogg</p>
+  </footer>
+</body>
+</html>

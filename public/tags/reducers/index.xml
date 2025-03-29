@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Reducers on UnlockedDevThoughts</title>
+    <link>http://localhost:1313/tags/reducers/</link>
+    <description>Recent content in Reducers on UnlockedDevThoughts</description>
+    <generator>Hugo</generator>
+    <language>en-us</language>
+    <lastBuildDate>Mon, 01 Jul 2013 00:00:00 +0000</lastBuildDate>
+    <atom:link href="http://localhost:1313/tags/reducers/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Reducers &amp; Leibniz</title>
+      <link>http://localhost:1313/posts/reducersandleibniz/</link>
+      <pubDate>Mon, 01 Jul 2013 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/reducersandleibniz/</guid>
+      <description>&lt;p&gt;I found some spare time and decided to explore the new Reducers library in Clojure core, introduced in version 1.5. Clojure is known for its concurrency strengths, but prior to 1.5, it lacked solid built-in support for parallel execution. Since Java 7, it&amp;rsquo;s been easy to use Fork/Join, but it&amp;rsquo;s still Java, which lacks the functional abstractions a functional language should provide. Reducers fix this.&lt;/p&gt;&#xA;&lt;p&gt;Also, a small contest at work was announced: &amp;ldquo;The most creative approximation of Pi.&amp;rdquo; I&amp;rsquo;ve never been nerdy enough to study Pi deeply, but I remembered a method by Gottfried Leibniz from school. After a quick peek in the textbook—Wikipedia—it turned out to be a perfect map-reduce example, fully parallelizable. Since this deals with an approximation of an irrational number, a language supporting rational numbers is a good fit—something many functional languages do well.&lt;/p&gt;</description>
+    </item>
+  </channel>
+</rss>

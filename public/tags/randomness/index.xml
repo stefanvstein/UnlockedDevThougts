@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Randomness on UnlockedDevThoughts</title>
+    <link>http://localhost:1313/tags/randomness/</link>
+    <description>Recent content in Randomness on UnlockedDevThoughts</description>
+    <generator>Hugo</generator>
+    <language>en-us</language>
+    <lastBuildDate>Wed, 20 Jan 2016 00:00:00 +0000</lastBuildDate>
+    <atom:link href="http://localhost:1313/tags/randomness/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Random Functional Values</title>
+      <link>http://localhost:1313/posts/randomfunctionalvalues/</link>
+      <pubDate>Wed, 20 Jan 2016 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/randomfunctionalvalues/</guid>
+      <description>&lt;p&gt;Functional random values, or a sequence of well-spread values.&lt;/p&gt;&#xA;&lt;p&gt;Did some evening Clojuring with a bunch of my padawans and friends. Everything looked good—free of side effects, single state, mastery—until randomness suddenly appeared as a hidden input.&lt;/p&gt;&#xA;&lt;p&gt;I quickly recommended passing randomness explicitly as input, perhaps stored in the single state and continuously transformed. This way, randomness becomes side-effect free and repeatable. The next random value is simply a deterministic transformation of the previous one.&lt;/p&gt;</description>
+    </item>
+  </channel>
+</rss>

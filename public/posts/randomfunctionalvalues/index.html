@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <meta charset="UTF-8">
+  <title>Random Functional Values</title>
+  <link rel="stylesheet" href="/css/custom.css">
+  <script src="https://cdn.jsdelivr.net/npm/prismjs/prism.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs/components/prism-java.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs/components/prism-python.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs/components/prism-clojure.min.js"></script>
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs/themes/prism.css">
+  <script src="https://cdn.jsdelivr.net/npm/prismjs/plugins/line-highlight/prism-line-highlight.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs/plugins/line-highlight/prism-line-highlight.css">
+</head>
+
+<body>
+  <header>
+    <h1>UnlockedDevThoughts</h1>
+  </header>
+  <main>
+    
+  <article>
+    <h2>Random Functional Values</h2>
+    <p><em>2016-01-20</em></p>
+    <p>Functional random values, or a sequence of well-spread values.</p>
+<p>Did some evening Clojuring with a bunch of my padawans and friends. Everything looked good—free of side effects, single state, mastery—until randomness suddenly appeared as a hidden input.</p>
+<p>I quickly recommended passing randomness explicitly as input, perhaps stored in the single state and continuously transformed. This way, randomness becomes side-effect free and repeatable. The next random value is simply a deterministic transformation of the previous one.</p>
+<p>We could use a <code>java.util.Random</code> sequence with an explicit seed like:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-clojure" data-lang="clojure"><span class="line"><span class="cl"><span class="p">(</span><span class="kd">defn </span><span class="nv">randoms</span> <span class="p">[</span><span class="nv">seed</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">  <span class="p">(</span><span class="k">let </span><span class="p">[</span><span class="nv">r</span> <span class="p">(</span><span class="nf">java.util.Random.</span> <span class="nv">seed</span><span class="p">)]</span>
+</span></span><span class="line"><span class="cl">    <span class="p">(</span><span class="nf">repeatedly</span> <span class="o">#</span><span class="p">(</span><span class="nf">.nextLong</span> <span class="nv">r</span><span class="p">))))</span>
+</span></span></code></pre></div><p>But architectural principles suggest that state should contain simple, serializable data. A serialized <code>java.util.Random</code> includes more than just a seed—hidden internal state complicates things.</p>
+<p>Instead, we just need a sequence that is repeatable and appears random. If each new value is the seed for the next, we only need to store a single value.</p>
+<p>George Marsaglia&rsquo;s fast random algorithm (<a href="http://www.jstatsoft.org/article/view/v008i14">http://www.jstatsoft.org/article/view/v008i14</a>) fits perfectly:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-clojure" data-lang="clojure"><span class="line"><span class="cl"><span class="p">(</span><span class="kd">defn </span><span class="nv">reasonable-spread</span> <span class="p">[</span><span class="o">^</span><span class="nb">long </span><span class="nv">i</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">  <span class="p">(</span><span class="k">let </span><span class="p">[</span><span class="nv">xor-right</span> <span class="p">(</span><span class="k">fn </span><span class="p">[</span><span class="nv">x</span> <span class="nv">n</span><span class="p">]</span> <span class="p">(</span><span class="nb">bit-xor </span><span class="nv">x</span> <span class="p">(</span><span class="nb">bit-shift-right </span><span class="nv">x</span> <span class="nv">n</span><span class="p">)))</span>
+</span></span><span class="line"><span class="cl">        <span class="nv">xor-left</span> <span class="p">(</span><span class="k">fn </span><span class="p">[</span><span class="nv">x</span> <span class="nv">n</span><span class="p">]</span> <span class="p">(</span><span class="nb">bit-xor </span><span class="nv">x</span> <span class="p">(</span><span class="nb">bit-shift-left </span><span class="nv">x</span> <span class="nv">n</span><span class="p">)))]</span>
+</span></span><span class="line"><span class="cl">    <span class="p">(</span><span class="k">if </span><span class="p">(</span><span class="nb">= </span><span class="mi">0</span> <span class="nv">i</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">      <span class="mi">1</span>
+</span></span><span class="line"><span class="cl">      <span class="p">(</span><span class="nb">-&gt; </span><span class="p">(</span><span class="nf">xor-left</span> <span class="nv">i</span> <span class="mi">21</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">          <span class="p">(</span><span class="nf">xor-right</span> <span class="mi">35</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">          <span class="p">(</span><span class="nf">xor-left</span> <span class="mi">4</span><span class="p">)))))</span>
+</span></span></code></pre></div><p>By feeding the result of <code>reasonable-spread</code> back into itself, we generate a deterministic, well-spread pseudo-random sequence. A <code>long</code> value is easy to pass around in most serialization formats.</p>
+<p>For convenience, here&rsquo;s how to produce an infinite sequence:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-clojure" data-lang="clojure"><span class="line"><span class="cl"><span class="p">(</span><span class="kd">defn </span><span class="nv">reasonable-spreads</span> <span class="p">[</span><span class="o">^</span><span class="nb">long </span><span class="nv">i</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">  <span class="p">(</span><span class="nb">iterate </span><span class="nv">reasonable-spread</span> <span class="p">(</span><span class="nf">reasonable-spread</span> <span class="nv">i</span><span class="p">)))</span>
+</span></span></code></pre></div><p>This approach gives you functional-style randomness—repeatable, side-effect-free, and architecture-friendly.</p>
+
+  </article>
+
+  </main>
+  <footer>
+    <p>&copy; 2025 Stefan GPT-blogg</p>
+  </footer>
+</body>
+</html>

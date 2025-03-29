@@ -15,5 +15,12 @@
       <guid>http://localhost:1313/posts/repl/</guid>
       <description>&lt;p&gt;A REPL—short for &lt;em&gt;Read, Eval, Print, Loop&lt;/em&gt;—is the primary development tool in dynamically compiled languages. REPLs are heavily used in languages like Ruby, Python, JavaScript, F#, Scala, Haskell, and especially in the Lisp family of languages. A REPL lets you try out expressions and forms the foundation of test-driven development in its purest form. An editor with a REPL is an IDE in its most minimal and distilled form.&lt;/p&gt;&#xA;&lt;p&gt;Below is a primitive REPL implementation in Clojure, a Lisp dialect:&lt;/p&gt;</description>
     </item>
+    <item>
+      <title>Hello World Polyglot in Brainf*ck and Whitespace</title>
+      <link>http://localhost:1313/posts/plyglot/</link>
+      <pubDate>Tue, 09 Apr 2013 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/plyglot/</guid>
+      <description>&lt;p&gt;A Hello World Polyglot in Brainf*ck and Whitespace&lt;/p&gt;&#xA;&lt;p&gt;Just to follow tradition—and use obscure languages—here’s a “Hello World!” implemented in both Brainf*ck and Whitespace at the same time.&lt;/p&gt;&#xA;&lt;p&gt;Personally, I don’t find either BF or WS particularly obscure. They’re just languages with annoyingly difficult syntax, but very simple semantics. Still, it gets a bit obscure when code for two languages is mixed. In this case though, it’s barely noticeable—since all alphanumeric characters are treated as comments, and only the rest (tabs, spaces, and line feeds) are actual code.&lt;/p&gt;</description>
+    </item>
   </channel>
 </rss>

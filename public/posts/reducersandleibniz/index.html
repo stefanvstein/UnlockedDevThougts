@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <meta charset="UTF-8">
+  <title>Reducers &amp; Leibniz</title>
+  <link rel="stylesheet" href="/css/custom.css">
+  <script src="https://cdn.jsdelivr.net/npm/prismjs/prism.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs/components/prism-java.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs/components/prism-python.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs/components/prism-clojure.min.js"></script>
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs/themes/prism.css">
+  <script src="https://cdn.jsdelivr.net/npm/prismjs/plugins/line-highlight/prism-line-highlight.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs/plugins/line-highlight/prism-line-highlight.css">
+</head>
+
+<body>
+  <header>
+    <h1>UnlockedDevThoughts</h1>
+  </header>
+  <main>
+    
+  <article>
+    <h2>Reducers &amp; Leibniz</h2>
+    <p><em>2013-07-01</em></p>
+    <p>I found some spare time and decided to explore the new Reducers library in Clojure core, introduced in version 1.5. Clojure is known for its concurrency strengths, but prior to 1.5, it lacked solid built-in support for parallel execution. Since Java 7, it&rsquo;s been easy to use Fork/Join, but it&rsquo;s still Java, which lacks the functional abstractions a functional language should provide. Reducers fix this.</p>
+<p>Also, a small contest at work was announced: &ldquo;The most creative approximation of Pi.&rdquo; I&rsquo;ve never been nerdy enough to study Pi deeply, but I remembered a method by Gottfried Leibniz from school. After a quick peek in the textbook—Wikipedia—it turned out to be a perfect map-reduce example, fully parallelizable. Since this deals with an approximation of an irrational number, a language supporting rational numbers is a good fit—something many functional languages do well.</p>
+<h2 id="first-attempt-a-naive-repl-translation">First Attempt: A Naive REPL Translation</h2>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-clojure" data-lang="clojure"><span class="line"><span class="cl"><span class="p">(</span><span class="kd">defn </span><span class="nv">exp</span> <span class="p">[</span><span class="nv">x</span> <span class="nv">n</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">  <span class="p">(</span><span class="nb">reduce </span><span class="nv">*</span><span class="o">&#39;</span> <span class="p">(</span><span class="nb">repeat </span><span class="nv">n</span> <span class="nv">x</span><span class="p">)))</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="p">(</span><span class="kd">defn </span><span class="nv">leibniz</span> <span class="p">[</span><span class="nv">n</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">  <span class="p">(</span><span class="nb">/ </span><span class="p">(</span><span class="nf">exp</span> <span class="mi">-1</span> <span class="nv">n</span><span class="p">)</span> <span class="p">(</span><span class="nf">+</span><span class="o">&#39;</span> <span class="mi">1</span> <span class="p">(</span><span class="nf">*</span><span class="o">&#39;</span> <span class="nv">n</span> <span class="mi">2</span><span class="p">))))</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="p">(</span><span class="kd">defn </span><span class="nv">quarter-pi</span> <span class="p">[</span><span class="nv">n</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">  <span class="p">(</span><span class="nb">reduce + </span><span class="p">(</span><span class="nb">map </span><span class="nv">leibniz</span> <span class="p">(</span><span class="nb">range </span><span class="mi">0</span> <span class="nv">n</span><span class="p">))))</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="p">(</span><span class="nb">time </span><span class="p">(</span><span class="nb">double </span><span class="p">(</span><span class="nb">* </span><span class="mi">4</span> <span class="p">(</span><span class="nf">quarter-pi</span> <span class="mi">10000</span><span class="p">))))</span>
+</span></span><span class="line"><span class="cl"><span class="c1">;; &#34;Elapsed time: 372310.779121 msecs&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="c1">;; =&gt; 3.141492653590043</span>
+</span></span></code></pre></div><h3 id="explanation">Explanation:</h3>
+<ul>
+<li><code>exp</code> calculates x to the power of n using rational-safe multiplication (<code>*'</code>).</li>
+<li><code>leibniz</code> returns the nth term in the Leibniz series.</li>
+<li><code>quarter-pi</code> adds up the first <code>n</code> terms.</li>
+<li>The result is multiplied by 4 to approximate Pi.</li>
+</ul>
+<p>However, it&rsquo;s slow, and not accurate enough. We need more terms and better performance.</p>
+<h2 id="optimization-eliminate-power-calculation">Optimization: Eliminate Power Calculation</h2>
+<p>Instead of multiplying -1 repeatedly, we use a conditional:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-clojure" data-lang="clojure"><span class="line"><span class="cl"><span class="p">(</span><span class="kd">defn </span><span class="nv">leibniz</span> <span class="p">[</span><span class="nv">n</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">  <span class="p">(</span><span class="nb">/ </span><span class="p">(</span><span class="k">if </span><span class="p">(</span><span class="nf">odd?</span> <span class="nv">n</span><span class="p">)</span> <span class="mi">-1</span> <span class="mi">1</span><span class="p">)</span> <span class="p">(</span><span class="nf">+</span><span class="o">&#39;</span> <span class="mi">1</span> <span class="p">(</span><span class="nf">*</span><span class="o">&#39;</span> <span class="nv">n</span> <span class="mi">2</span><span class="p">))))</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="p">(</span><span class="nb">time </span><span class="p">(</span><span class="nb">double </span><span class="p">(</span><span class="nb">* </span><span class="mi">4</span> <span class="p">(</span><span class="nf">quarter-pi</span> <span class="mi">10000</span><span class="p">))))</span>
+</span></span><span class="line"><span class="cl"><span class="c1">;; &#34;Elapsed time: 356521.187414 msecs&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="c1">;; =&gt; 3.141492653590043</span>
+</span></span></code></pre></div><p>It’s a little faster, but still not great.</p>
+<h2 id="parallel-processing-with-reducers">Parallel Processing with Reducers</h2>
+<p>Let’s take advantage of the new Reducers library:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-clojure" data-lang="clojure"><span class="line"><span class="cl"><span class="p">(</span><span class="nf">require</span> <span class="o">&#39;</span><span class="p">[</span><span class="nv">clojure.core.reducers</span> <span class="ss">:as</span> <span class="nv">r</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="p">(</span><span class="kd">defn </span><span class="nv">quarter-pi</span> <span class="p">[</span><span class="nv">n</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">  <span class="p">(</span><span class="nf">r/fold</span> <span class="nb">+ </span><span class="p">(</span><span class="nf">r/map</span> <span class="nv">leibniz</span> <span class="p">(</span><span class="nf">vec</span> <span class="p">(</span><span class="nb">range </span><span class="nv">n</span><span class="p">)))))</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="p">(</span><span class="nb">time </span><span class="p">(</span><span class="nb">double </span><span class="p">(</span><span class="nb">* </span><span class="mi">4</span> <span class="p">(</span><span class="nf">quarter-pi</span> <span class="mi">10000</span><span class="p">))))</span>
+</span></span><span class="line"><span class="cl"><span class="c1">;; &#34;Elapsed time: 1995.426514 msecs&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="c1">;; =&gt; 3.141492653590043</span>
+</span></span></code></pre></div><h3 id="observations">Observations:</h3>
+<ul>
+<li><code>r/map</code> returns a foldable function, not a realized sequence.</li>
+<li><code>r/fold</code> understands how to parallelize the computation.</li>
+</ul>
+<p>Huge improvement—almost 200x faster!</p>
+<p>Let’s try 100,000 iterations:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-clojure" data-lang="clojure"><span class="line"><span class="cl"><span class="p">(</span><span class="nb">time </span><span class="p">(</span><span class="nb">double </span><span class="p">(</span><span class="nb">* </span><span class="mi">4</span> <span class="p">(</span><span class="nf">quarter-pi</span> <span class="mi">100000</span><span class="p">))))</span>
+</span></span><span class="line"><span class="cl"><span class="c1">;; &#34;Elapsed time: 90972.733397 msecs&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="c1">;; =&gt; 3.141582653589793</span>
+</span></span></code></pre></div><h3 id="comparison">Comparison:</h3>
+<ul>
+<li><code>Math/PI</code> = 3.141592653589793</li>
+<li>Our approximation = 3.141582653589793</li>
+</ul>
+<p>Not bad.</p>
+<h2 id="rational-madness">Rational Madness</h2>
+<p>Even with just 100,000 terms, the resulting rational has both numerator and denominator in the order of 1.086865e+6!
+Compare that with <code>Long/MAX_VALUE</code> (~1e+18) or the estimated number of particles in the universe (~1e+80).</p>
+<p>Leibniz’s method isn’t efficient but it’s a great example. Apparently, the original form needs 5 billion iterations to reach 10 decimal places.</p>
+<h2 id="final-pretty-version-parallel-leibniz-in-clojure">Final Pretty Version: Parallel Leibniz in Clojure</h2>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-clojure" data-lang="clojure"><span class="line"><span class="cl"><span class="p">(</span><span class="kd">defn </span><span class="nv">pi-aprox</span> <span class="p">[</span><span class="nv">n</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">  <span class="p">(</span><span class="k">let </span><span class="p">[</span><span class="nv">double-up</span> <span class="o">#</span><span class="p">(</span><span class="nf">*</span><span class="o">&#39;</span> <span class="nv">%</span> <span class="mi">2</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="nv">alter-sign</span> <span class="o">#</span><span class="p">(</span><span class="k">if </span><span class="p">(</span><span class="nf">odd?</span> <span class="nv">%</span><span class="p">)</span> <span class="mi">-1</span> <span class="mi">1</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="nv">leibniz</span> <span class="o">#</span><span class="p">(</span><span class="nb">/ </span><span class="p">(</span><span class="nf">alter-sign</span> <span class="nv">%</span><span class="p">)</span> <span class="p">(</span><span class="nb">inc </span><span class="p">(</span><span class="nf">double-up</span> <span class="nv">%</span><span class="p">)))</span>
+</span></span><span class="line"><span class="cl">        <span class="nv">natural-numbers</span> <span class="p">(</span><span class="nf">vec</span> <span class="p">(</span><span class="nb">range </span><span class="nv">n</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">        <span class="nb">reduce </span><span class="nv">clojure.core.reducers/fold</span>
+</span></span><span class="line"><span class="cl">        <span class="nb">map </span><span class="nv">clojure.core.reducers/map</span>
+</span></span><span class="line"><span class="cl">        <span class="nv">quarter-pi</span> <span class="p">(</span><span class="nb">reduce + </span><span class="p">(</span><span class="nb">map </span><span class="nv">leibniz</span> <span class="nv">natural-numbers</span><span class="p">))]</span>
+</span></span><span class="line"><span class="cl">    <span class="p">(</span><span class="nb">double </span><span class="p">(</span><span class="nb">* </span><span class="mi">4</span> <span class="nv">quarter-pi</span><span class="p">))))</span>
+</span></span></code></pre></div><p>Let the reduction begin!</p>
+
+  </article>
+
+  </main>
+  <footer>
+    <p>&copy; 2025 Stefan GPT-blogg</p>
+  </footer>
+</body>
+</html>

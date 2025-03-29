@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Soap on UnlockedDevThoughts</title>
+    <link>http://localhost:1313/tags/soap/</link>
+    <description>Recent content in Soap on UnlockedDevThoughts</description>
+    <generator>Hugo</generator>
+    <language>en-us</language>
+    <lastBuildDate>Fri, 30 Oct 2015 00:00:00 +0000</lastBuildDate>
+    <atom:link href="http://localhost:1313/tags/soap/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Consuming SOAP Services with Clojure Macros</title>
+      <link>http://localhost:1313/posts/soapclojure/</link>
+      <pubDate>Fri, 30 Oct 2015 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/soapclojure/</guid>
+      <description>&lt;p&gt;Two colleagues were consuming a SOAP service in Clojure and ran into some trouble. Being fairly new to Clojure, they struggled with mapping Java class hierarchies into Clojure keyword maps. They didn’t use the built-in &lt;code&gt;bean&lt;/code&gt; function—partly because they didn’t know about it, and partly because they preferred a more controlled transformation.&lt;/p&gt;&#xA;&lt;p&gt;They generated the classes from WSDL using &lt;code&gt;wsimport&lt;/code&gt;.&lt;/p&gt;&#xA;&lt;h3 id=&#34;the-problem&#34;&gt;The Problem&lt;/h3&gt;&#xA;&lt;p&gt;Let’s consider a simplified SOAP service implemented in Java:&lt;/p&gt;</description>
+    </item>
+  </channel>
+</rss>
